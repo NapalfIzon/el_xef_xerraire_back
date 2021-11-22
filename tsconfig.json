@@ -5,6 +5,6 @@
     "noEmitOnError": true,
     "sourceMap": true
   },
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", ".eslintrc.js"],
   "exclude": ["./dist", "node_modules"]
 }
