@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon index -q",
     "start": "node index",
-    "test": "jest --watchAll --collect-coverage"
+    "test": "jest --watchAll --collect-coverage",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -29,7 +30,8 @@
     "eslint-plugin-import": "^2.25.3",
     "jest": "^27.3.1",
     "nodemon": "^2.0.15",
-    "supertest": "^6.1.6"
+    "supertest": "^6.1.6",
+    "husky": "^7.0.0"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
