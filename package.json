@@ -10,7 +10,8 @@
     "test-dev": "jest --watchAll --collect-coverage",
     "prepare": "husky install",
     "git-hook": "eslint --ignore-path .gitignore .",
-    "ts": "tsc --watch"
+    "ts": "tsc --watch",
+    "build": "tsc"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "lint-staged": {
+    "*.js": "eslint --cache --fix"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "dist"
+    ]
+  },
   "bugs": {
     "url": "https://github.com/SkylabCoders/Napoleon_Back-Final-Project-202109/issues"
   },
