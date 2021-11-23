@@ -1,6 +1,11 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "target": "es6",
+    "module": "commonjs",
     "lib": ["ES2016", "DOM"],
+    "rootDir": "./src",
     "outDir": "./dist",
     "noEmitOnError": true,
     "sourceMap": true
