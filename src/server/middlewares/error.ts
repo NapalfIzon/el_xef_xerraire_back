@@ -1,7 +1,6 @@
 import chalk from "chalk";
 import Debug from "debug";
-
-const { ValidationError } = require("express-validation");
+import { ValidationError } from "express-validation";
 
 const debug = Debug("xerrAPI:error");
 
@@ -14,8 +13,13 @@ const notFoundHandler = (req, res) => {
   res.status(404).json({ error: "Endpoint no encontrado!" });
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const finalErrorHandler = (error, req, res, next) => {
+const finalErrorHandler = (
+  error: { code: number; message: string },
+  req,
+  res,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next
+) => {
   debug(
     chalk.bgYellow.magenta.greenBright(`Se ha un error en el servidor ಥ╭╮ಥ`)
   );
