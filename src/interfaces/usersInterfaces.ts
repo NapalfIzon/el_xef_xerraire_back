@@ -11,36 +11,36 @@ export interface UsersPaths {
 }
 
 export interface UserSchema {
-  username: String;
-  email: String;
-  password: String;
-  avatar: String;
-  avatarBackup: String;
+  username: string;
+  email: string;
+  password: string;
+  avatar: string;
+  avatarBackup: string;
   registrationDate: Date;
-  myRecipes?: Array<String>;
-  myFavorites?: Array<String>;
+  myRecipes?: Array<string>;
+  myFavorites?: Array<string>;
   save?: Function;
 }
 
 export interface UserRegistered {
-  id?: String;
-  email?: String;
-  username: String;
-  password: String;
+  id?: string;
+  email?: string;
+  username: string;
+  password: string;
 }
 
 export interface UserModified {
-  id: String;
-  username?: String;
-  email?: String;
-  password?: String;
-  avatar?: String;
+  id: string;
+  username?: string;
+  email?: string;
+  password?: string;
+  avatar?: string;
 }
 
 export interface RecipeModified {
-  id: String;
-  newRecipe?: String;
-  newFavorite?: String;
-  deletedRecipe?: String;
-  deletedFavorite?: String;
+  id: string;
+  newRecipe?: string;
+  newFavorite?: string;
+  deletedRecipe?: string;
+  deletedFavorite?: string;
 }
