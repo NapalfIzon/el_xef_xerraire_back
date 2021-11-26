@@ -1,4 +1,5 @@
 import { Schema, model, Types } from "mongoose";
+import { UserSchema } from "../../interfaces/usersInterfaces";
 
 const userSchema = new Schema({
   username: {
@@ -17,20 +18,26 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  avatarBackup: {
+    type: String,
+    required: true,
+  },
   registrationDate: {
     type: Date,
     required: true,
   },
   myRecipes: {
     type: [Types.ObjectId],
+    ref: "Recipe",
     required: false,
   },
   myFavorites: {
     type: [Types.ObjectId],
+    ref: "Favorite",
     required: false,
   },
 });
 
-const User = model("User", userSchema, "users");
+const User = model<UserSchema>("User", userSchema, "users");
 
 export default User;
