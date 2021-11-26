@@ -25,7 +25,13 @@
   },
   "jest": {
     "testPathIgnorePatterns": [
-      "dist"
+      ".github",
+      ".husky",
+      ".scannerwork",
+      "coverage",
+      "dist",
+      "node_modules",
+      "src/server/routes/"
     ]
   },
   "bugs": {
