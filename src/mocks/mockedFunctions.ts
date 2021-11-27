@@ -1,4 +1,9 @@
-import { Response } from "express";
+import { Request, Response } from "express";
+
+const mockedRequest = () => {
+  const req = {} as Request;
+  return req;
+};
 
 const mockedResponse = () => {
   const response = {} as Response;
@@ -8,4 +13,4 @@ const mockedResponse = () => {
   return response;
 };
 
-export default mockedResponse;
+export { mockedRequest, mockedResponse };
