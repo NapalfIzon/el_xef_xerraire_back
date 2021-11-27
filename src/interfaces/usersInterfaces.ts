@@ -20,6 +20,16 @@ export interface UserSchema {
   myRecipes?: Array<string>;
   myFavorites?: Array<string>;
   save?: Function;
+  id?: string;
+}
+
+export interface NewUser {
+  username: string;
+  email: string;
+  password: string;
+  avatar: string;
+  avatarBackup: string;
+  registrationDate: Date;
 }
 
 export interface UserRegistered {
