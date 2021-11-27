@@ -14,7 +14,7 @@ import {
 const debug = Debug("xerrAPI:usersController");
 
 const getUserById = async (
-  req: express.Request,
+  req,
   res: express.Response,
   next: express.NextFunction
 ) => {
