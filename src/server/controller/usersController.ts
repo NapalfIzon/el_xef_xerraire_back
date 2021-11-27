@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../../database/models/user";
 import {
+  NewUser,
   UserModified,
   UserRegistered,
   UserSchema,
@@ -14,7 +15,7 @@ import {
 const debug = Debug("xerrAPI:usersController");
 
 const getUserById = async (
-  req,
+  req: express.Request,
   res: express.Response,
   next: express.NextFunction
 ) => {
@@ -44,32 +45,40 @@ const addUser = async (
 ) => {
   const userData = req.body;
 
-  try {
-    const password = await bcrypt.hash(userData.password, 10);
-    const newUser: UserSchema = {
-      username: userData.username,
-      email: userData.email,
-      password,
-      avatar: userData.avatar,
-      avatarBackup: userData.avatar,
-      registrationDate: new Date(),
-    };
-    await User.create(newUser);
-    debug(
-      chalk.bgGray.black(
-        `Usuario ${userData.username} guardado correctamente ${"(´ ▽ `)b"}`
-      )
-    );
-    res.json({
-      Resultado: `Usuario ${userData.username} guardado correctamente.`,
-    });
-  } catch {
-    const error: any = new Error(
-      `No se ha podido añadir al usuario solicitado`
-    );
-    error.code = 400;
-    error.status = 400;
+  const userRegistered: UserRegistered = await User.findOne(userData.email);
+
+  if (userRegistered) {
+    const error: any = new Error("Email ya registrado.");
+    error.code = 401;
     next(error);
+  } else {
+    try {
+      const password = await bcrypt.hash(userData.password, 10);
+      const newUser: NewUser = {
+        username: userData.username,
+        email: userData.email,
+        password,
+        avatar: userData.avatar,
+        avatarBackup: userData.avatar,
+        registrationDate: new Date(),
+      };
+      await User.create(newUser);
+      debug(
+        chalk.bgGray.black(
+          `Usuario ${userData.username} guardado correctamente ${"(´ ▽ `)b"}`
+        )
+      );
+      res.json({
+        Resultado: `Usuario ${userData.username} guardado correctamente.`,
+      });
+    } catch {
+      const error: any = new Error(
+        "No se ha podido añadir al usuario solicitado."
+      );
+      error.code = 400;
+      error.status = 400;
+      next(error);
+    }
   }
 };
 
