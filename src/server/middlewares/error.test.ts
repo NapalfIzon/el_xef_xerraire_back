@@ -1,3 +1,4 @@
+import ErrorValidation from "../../interfaces/errorInterface";
 import { notFoundHandler, finalErrorHandler } from "./error";
 
 const mockedRes = (() => {
@@ -22,12 +23,22 @@ describe("Given a notFoundHandler function,", () => {
 });
 
 describe("Given a finalErrorHandler function,", () => {
+  describe("When it receives an random error with statusCode 400", () => {
+    test("Then it should return a response with message 'Credenciales erroneas!'", async () => {
+      const error = new Error("Validation error") as ErrorValidation;
+      error.statusCode = 400;
+
+      await finalErrorHandler(error, null, mockedRes, null);
+
+      expect(mockedRes.status).toHaveBeenCalled();
+      expect(mockedRes.status).toHaveBeenCalledWith(400);
+    });
+  });
+
   describe("When it receives an random error, a request, a response and a next function,", () => {
     test("Then it should return a response with status 500.", async () => {
-      const error = {
-        code: 0,
-        message: "",
-      };
+      const error = new Error("Validation error") as ErrorValidation;
+      error.statusCode = 0;
 
       await finalErrorHandler(error, null, mockedRes, null);
 
