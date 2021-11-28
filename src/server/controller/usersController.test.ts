@@ -6,6 +6,7 @@ import {
   newUserTest,
   userLoginTest,
   recipeAndFavoriteTest,
+  testUserId,
 } from "../../mocks/mockedVariables";
 import { mockedRequest, mockedResponse } from "../../mocks/mockedFunctions";
 import {
@@ -16,6 +17,7 @@ import {
   modifyUser,
   removeFavorite,
   removeRecipe,
+  removeUser,
   userLogin,
 } from "./usersController";
 
@@ -24,11 +26,8 @@ jest.mock("../../database/models/user");
 describe("Given a getUserById controller,", () => {
   describe("When it receices a request with an inexistent user id in the params,", () => {
     test("Then it should invoke next function with an error message.", async () => {
-      const testUserId = "whatever";
       const req = mockedRequest();
-      req.params = {
-        id: testUserId,
-      };
+      req.params = { ...testUserId };
       User.findById = jest.fn().mockRejectedValue("error");
       const next = jest.fn();
 
@@ -42,11 +41,8 @@ describe("Given a getUserById controller,", () => {
 
   describe("When it receives a request with an user id in the params,", () => {
     test("Then it should invoke res.json with the data of the user.", async () => {
-      const testUserId = "61a24c6990dd8c9d5d005339";
       const req = mockedRequest();
-      req.params = {
-        id: testUserId,
-      };
+      req.params = { ...testUserId };
       User.findById = jest.fn().mockResolvedValue(userTest);
       const res = mockedResponse();
 
@@ -419,6 +415,60 @@ describe("Given a removeFavorite controller,", () => {
       userTest.save = jest.fn().mockResolvedValue(true);
 
       await removeFavorite(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(resText);
+    });
+  });
+});
+
+describe("Given a removeUser controller,", () => {
+  describe("When it receives a non registered user id,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      req.params = { ...testUserId };
+      const errorProperty = "message";
+      const errorMessage = `No se ha encontrado al usuario id: ${req.params.id}`;
+      const next = jest.fn();
+      User.findById = jest.fn().mockReturnValue(false);
+
+      await removeUser(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives a registered user id but it can't be deleted,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      req.params = { ...testUserId };
+      const errorProperty = "message";
+      const errorMessage = `No se ha podido eliminar al usuario id: ${req.params.id}`;
+      const next = jest.fn();
+      User.findById = jest.fn().mockReturnValue(userTest);
+      User.findByIdAndDelete = jest.fn().mockRejectedValue("whatever");
+
+      await removeUser(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives a registered user id,", () => {
+    test("Then it should invoke res.json confirming the deleted id.", async () => {
+      const req = mockedRequest();
+      req.params = { ...testUserId };
+      const res = mockedResponse();
+      const resText = {
+        resultado: `Se ha eliminado correctamente al usuario ${req.params.id}`,
+      };
+      User.findById = jest.fn().mockReturnValue(userTest);
+      User.findByIdAndDelete = jest.fn().mockReturnValue("whatever");
+
+      await removeUser(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(resText);
     });
