@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import Debug from "debug";
-import { ValidationError } from "express-validation";
+import ErrorValidation from "../../interfaces/errorInterface";
 
 const debug = Debug("xerrAPI:error");
 
@@ -14,7 +14,7 @@ const notFoundHandler = (req, res) => {
 };
 
 const finalErrorHandler = (
-  error: { code: number; message: string },
+  error: ErrorValidation,
   req,
   res,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -24,7 +24,7 @@ const finalErrorHandler = (
     chalk.bgYellow.magenta.greenBright(`Se ha un error en el servidor ಥ╭╮ಥ`)
   );
 
-  if (error instanceof ValidationError) {
+  if (error.statusCode === 400) {
     error.code = 400;
     error.message = "Credenciales erroneas!";
   }
