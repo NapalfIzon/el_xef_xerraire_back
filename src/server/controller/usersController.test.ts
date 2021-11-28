@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../../database/models/user";
 import { UserSchema, UserRegistered } from "../../interfaces/usersInterfaces";
 import { mockedRequest, mockedResponse } from "../../mocks/mockedFunctions";
-import { addUser, getUserById, userLogin } from "./usersController";
+import { addUser, getUserById, modifyUser, userLogin } from "./usersController";
 
 jest.mock("../../database/models/user");
 
@@ -20,6 +20,7 @@ const userTest: UserSchema = {
 };
 
 const newUserTest = {
+  id: "12345",
   username: "test",
   email: "test@test.com",
   password: "test",
@@ -172,6 +173,41 @@ describe("Given a userLogin controller,", () => {
       await userLogin(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(testingToken);
+    });
+  });
+});
+
+describe("Given a modifyUser controller,", () => {
+  describe("When it receives a non existent id user,", () => {
+    test("Then it should invoke next function with an error with message 'Formato de datos incorrectos.'", async () => {
+      const req = mockedRequest();
+      req.body = newUserTest;
+      const next = jest.fn();
+      User.findByIdAndUpdate = jest.fn().mockRejectedValue("whatever");
+
+      await modifyUser(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty("message");
+      expect(next.mock.calls[0][0].message).toBe(
+        "Formato de datos incorrectos."
+      );
+    });
+  });
+
+  describe("When it receives a registered id with modified username and email,", () => {
+    test("Then it should invoke res.json confirming the modifications was maden correctly.", async () => {
+      const req = mockedRequest();
+      req.body = newUserTest;
+      const res = mockedResponse();
+      const resText = {
+        Resultado: `Usuario id:${newUserTest.id} modificado correctamente.`,
+      };
+      User.findByIdAndUpdate = jest.fn().mockResolvedValue(newUserTest);
+
+      await modifyUser(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(resText);
     });
   });
 });
