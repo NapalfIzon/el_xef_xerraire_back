@@ -3,11 +3,18 @@ import jwt from "jsonwebtoken";
 import User from "../../database/models/user";
 import { UserSchema, UserRegistered } from "../../interfaces/usersInterfaces";
 import { mockedRequest, mockedResponse } from "../../mocks/mockedFunctions";
-import { addUser, getUserById, modifyUser, userLogin } from "./usersController";
+import {
+  addRecipe,
+  addUser,
+  getUserById,
+  modifyUser,
+  userLogin,
+} from "./usersController";
 
 jest.mock("../../database/models/user");
 
 const userTest: UserSchema = {
+  id: "12345",
   username: "test",
   email: "test@test.com",
   password: "$2b$10$C8IeRGecLr60m88.B0JEkOqEdzboyKy0jZeCLHX4jBsOipPNpi7Iq",
@@ -16,7 +23,6 @@ const userTest: UserSchema = {
   registrationDate: new Date("2021-11-27T15:19:05.521Z"),
   myRecipes: [],
   myFavorites: [],
-  id: "61a24c6990dd8c9d5d005339",
 };
 
 const newUserTest = {
@@ -37,9 +43,14 @@ const userLoginTest = async () => {
   return userData;
 };
 
+const newRecipeTest = {
+  id: "12345",
+  newRecipe: "testNewRecipe",
+};
+
 describe("Given a getUserById controller,", () => {
   describe("When it receices a request with an inexistent user id in the params,", () => {
-    test("Then it should invoke res.json with the data of the user.", async () => {
+    test("Then it should invoke next function with an error message.", async () => {
       const testUserId = "whatever";
       const req = mockedRequest();
       req.params = {
@@ -73,9 +84,9 @@ describe("Given a getUserById controller,", () => {
   });
 });
 
-describe("Given a addUser controller,", () => {
+describe("Given an addUser controller,", () => {
   describe("When it receives new user data with an existing email,", () => {
-    test("Then it should next funtion with an error message 'Email ya registrado.'", async () => {
+    test("Then it should next funtion with an error message.", async () => {
       const req = mockedRequest();
       req.body = newUserTest;
       const next = jest.fn();
@@ -90,7 +101,7 @@ describe("Given a addUser controller,", () => {
   });
 
   describe("When it receives new incomplete user data,", () => {
-    test("Then it should invoke next funtion with an error message 'No se ha podido añadir al usuario solicitado'", async () => {
+    test("Then it should invoke next funtion with an error message.", async () => {
       const req = mockedRequest();
       req.body = newUserTest;
       const next = jest.fn();
@@ -125,9 +136,9 @@ describe("Given a addUser controller,", () => {
   });
 });
 
-describe("Given a userLogin controller,", () => {
+describe("Given an userLogin controller,", () => {
   describe("When it receives a non registered email,", () => {
-    test("Then it should invoke next function with an error with message 'Datos incorrectos'", async () => {
+    test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
       const testingUser: UserRegistered = await userLoginTest();
       req.body = testingUser;
@@ -143,7 +154,7 @@ describe("Given a userLogin controller,", () => {
   });
 
   describe("When it receives a registered email and an incorrect password,", () => {
-    test("Then it should invoke next function with an error with message 'Datos incorrectos'", async () => {
+    test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
       const testingUser: UserRegistered = await userLoginTest();
       req.body = testingUser;
@@ -179,7 +190,7 @@ describe("Given a userLogin controller,", () => {
 
 describe("Given a modifyUser controller,", () => {
   describe("When it receives a non existent id user,", () => {
-    test("Then it should invoke next function with an error with message 'Formato de datos incorrectos.'", async () => {
+    test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
       req.body = newUserTest;
       const next = jest.fn();
@@ -206,6 +217,43 @@ describe("Given a modifyUser controller,", () => {
       User.findByIdAndUpdate = jest.fn().mockResolvedValue(newUserTest);
 
       await modifyUser(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(resText);
+    });
+  });
+});
+
+describe("Given an addRecipe controller,", () => {
+  describe("When it receives an incorrect recipe id", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      req.body = newRecipeTest;
+      const next = jest.fn();
+      User.findById = jest.fn().mockResolvedValue(userTest);
+      userTest.myRecipes.push = jest.fn().mockRejectedValue("whatever");
+
+      await addRecipe(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty("message");
+      expect(next.mock.calls[0][0].message).toBe(
+        "Se ha producido un fallo al añadir la receta al usuario."
+      );
+    });
+  });
+
+  describe("When it receives an registered id and a recipe id", () => {
+    test("Then it should invoke res.json confirming the recipe id was added correctly to the logued user.", async () => {
+      const req = mockedRequest();
+      req.body = newRecipeTest;
+      const res = mockedResponse();
+      const resText = {
+        Resultado: `Receta añadida al usuario id:${newRecipeTest.id} correctamente.`,
+      };
+      User.findById = jest.fn().mockReturnValue(userTest);
+      userTest.save = jest.fn().mockResolvedValue(true);
+
+      await addRecipe(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(resText);
     });
