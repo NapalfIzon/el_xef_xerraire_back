@@ -8,6 +8,7 @@ import {
   addUser,
   getUserById,
   modifyUser,
+  removeRecipe,
   userLogin,
 } from "./usersController";
 
@@ -21,8 +22,8 @@ const userTest: UserSchema = {
   avatar: "/IMG/test.webp",
   avatarBackup: "/IMG/test.webp",
   registrationDate: new Date("2021-11-27T15:19:05.521Z"),
-  myRecipes: [],
-  myFavorites: [],
+  myRecipes: ["testMyRecipe"],
+  myFavorites: ["testFavoriteRecipe"],
 };
 
 const newUserTest = {
@@ -31,6 +32,8 @@ const newUserTest = {
   email: "test@test.com",
   password: "test",
   avatar: "/IMG/test.webp",
+  myRecipes: ["testMyRecipe"],
+  myFavorites: ["testFavoriteRecipe"],
 };
 
 const userLoginTest = async () => {
@@ -43,9 +46,12 @@ const userLoginTest = async () => {
   return userData;
 };
 
-const newRecipeTest = {
+const recipeAndFavoriteTest = {
   id: "12345",
-  newRecipe: "testNewRecipe",
+  newRecipe: "testMyRecipe",
+  newFavorite: "testFavoriteRecipe",
+  deletedRecipe: "testMyRecipe",
+  deletedFavorite: "testFavoriteRecipe",
 };
 
 describe("Given a getUserById controller,", () => {
@@ -227,7 +233,7 @@ describe("Given an addRecipe controller,", () => {
   describe("When it receives an incorrect recipe id", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
-      req.body = newRecipeTest;
+      req.body = recipeAndFavoriteTest;
       const next = jest.fn();
       User.findById = jest.fn().mockResolvedValue(userTest);
       userTest.myRecipes.push = jest.fn().mockRejectedValue("whatever");
@@ -245,15 +251,92 @@ describe("Given an addRecipe controller,", () => {
   describe("When it receives an registered id and a recipe id", () => {
     test("Then it should invoke res.json confirming the recipe id was added correctly to the logued user.", async () => {
       const req = mockedRequest();
-      req.body = newRecipeTest;
+      req.body = recipeAndFavoriteTest;
       const res = mockedResponse();
       const resText = {
-        Resultado: `Receta añadida al usuario id:${newRecipeTest.id} correctamente.`,
+        Resultado: `Receta añadida al usuario id:${recipeAndFavoriteTest.id} correctamente.`,
       };
       User.findById = jest.fn().mockReturnValue(userTest);
       userTest.save = jest.fn().mockResolvedValue(true);
 
       await addRecipe(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(resText);
+    });
+  });
+});
+
+describe("Given a removeRecipe controller,", () => {
+  describe("When it receives an incorrect deletedRecipe format,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      const deletedRecipeInfo = { ...recipeAndFavoriteTest };
+      req.body = deletedRecipeInfo;
+      delete req.body.deletedRecipe;
+      const next = jest.fn();
+
+      await removeRecipe(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty("message");
+      expect(next.mock.calls[0][0].message).toBe(
+        "El formato del valor de la receta a borrar es incorrecto."
+      );
+    });
+  });
+
+  describe("When it receives an non registered recipe id in myRecipes list,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      const deletedRecipeInfo = { ...recipeAndFavoriteTest };
+      deletedRecipeInfo.deletedRecipe = "whatever";
+      req.body = deletedRecipeInfo;
+      const errorProperty = "message";
+      const errorMessage = `El usuario id: ${deletedRecipeInfo.id} no tiene receta añadida con id: ${deletedRecipeInfo.deletedRecipe}`;
+      const next = jest.fn();
+      User.findById = jest.fn().mockReturnValue(userTest);
+
+      await removeRecipe(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives a recipe id in myRecipes list but it can't be removed,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      const deletedRecipeInfo = { ...recipeAndFavoriteTest };
+      req.body = deletedRecipeInfo;
+      const errorProperty = "message";
+      const errorMessage =
+        "Se ha producido un fallo al borrar la receta al usuario.";
+      const next = jest.fn();
+      User.findById = jest.fn().mockReturnValue(userTest);
+      userTest.myRecipes.remove = jest.fn().mockRejectedValue("whatever");
+
+      await removeRecipe(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives a recipe id equal to a recipe id in myRecipes list of the user,", () => {
+    test("Then it should invoke res.json with a confirmation message.", async () => {
+      const req = mockedRequest();
+      req.body = recipeAndFavoriteTest;
+      const res = mockedResponse();
+      const resText = {
+        Resultado: `Receta borrada al usuario id:${recipeAndFavoriteTest.id} correctamente.`,
+      };
+      User.findById = jest.fn().mockReturnValue(userTest);
+      userTest.myRecipes.remove = jest.fn().mockResolvedValue("whatever");
+      userTest.save = jest.fn().mockResolvedValue(true);
+
+      await removeRecipe(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(resText);
     });
