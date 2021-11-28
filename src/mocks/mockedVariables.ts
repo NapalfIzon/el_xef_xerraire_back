@@ -45,4 +45,14 @@ const recipeAndFavoriteTest: RecipeModified = {
   deletedFavorite: "testFavoriteRecipe",
 };
 
-export { userTest, newUserTest, userLoginTest, recipeAndFavoriteTest };
+const testUserId: object = {
+  id: "12345",
+};
+
+export {
+  userTest,
+  newUserTest,
+  userLoginTest,
+  recipeAndFavoriteTest,
+  testUserId,
+};
