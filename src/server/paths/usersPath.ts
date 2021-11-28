@@ -5,7 +5,7 @@ const usersPath: UsersPaths = {
   addUser: "/new",
   userLogin: "/login",
   modifyUser: "/modifyuser",
-  removeUser: "/removeuser",
+  removeUser: "/user/:id",
   addRecipe: "/addrecipe",
   removeRecipe: "/removerecipe",
   addFavorite: "/addfavorite",
