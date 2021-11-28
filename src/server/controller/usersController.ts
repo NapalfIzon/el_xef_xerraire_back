@@ -164,33 +164,128 @@ const addRecipe = async (
   const newRecipeData: RecipeModified = req.body;
   const originalRecipesData: UserSchema = await User.findById(newRecipeData.id);
 
-  try {
-    originalRecipesData.myRecipes.push(newRecipeData.newRecipe);
+  if (newRecipeData.newRecipe) {
+    try {
+      originalRecipesData.myRecipes.push(newRecipeData.newRecipe);
 
-    await originalRecipesData.save();
+      await originalRecipesData.save();
 
-    debug(
-      chalk.bgGray.black(
-        `Receta añadida al usuario id:${
-          newRecipeData.id
-        } correctamente ${"(´ ▽ `)b"}`
-      )
-    );
-    res.json({
-      Resultado: `Receta añadida al usuario id:${newRecipeData.id} correctamente.`,
-    });
-  } catch {
+      debug(
+        chalk.bgGray.black(
+          `Receta añadida al usuario id:${
+            newRecipeData.id
+          } correctamente ${"(´ ▽ `)b"}`
+        )
+      );
+      res.json({
+        Resultado: `Receta añadida al usuario id:${newRecipeData.id} correctamente.`,
+      });
+    } catch {
+      const error: any = new Error(
+        "Se ha producido un fallo al añadir la receta al usuario."
+      );
+      error.code = 400;
+      next(error);
+    }
+  } else {
     const error: any = new Error(
-      "Se ha producido un fallo al añadir la receta al usuario."
+      "El formato del valor de la receta a añadir es incorrecto."
     );
     error.code = 400;
     next(error);
   }
 };
 
-const removeRecipe = () => {};
+const removeRecipe = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const deletedRecipeData: RecipeModified = req.body;
+  const originalRecipesData: any = await User.findById(deletedRecipeData.id);
 
-const addFavorite = () => {};
+  if (deletedRecipeData.deletedRecipe) {
+    if (
+      originalRecipesData.myRecipes.includes(deletedRecipeData.deletedRecipe)
+    ) {
+      try {
+        originalRecipesData.myRecipes.remove(deletedRecipeData.deletedRecipe);
+        await originalRecipesData.save();
+
+        debug(
+          chalk.bgGray.black(
+            `Receta borrada al usuario id:${
+              deletedRecipeData.id
+            } correctamente ${"(´ ▽ `)b"}`
+          )
+        );
+        res.json({
+          Resultado: `Receta borrada al usuario id:${deletedRecipeData.id} correctamente.`,
+        });
+      } catch {
+        const error: any = new Error(
+          "Se ha producido un fallo al borrar la receta al usuario."
+        );
+        error.code = 400;
+        next(error);
+      }
+    } else {
+      const error: any = new Error(
+        `El usuario id: ${deletedRecipeData.id} no tiene receta añadida con id: ${deletedRecipeData.deletedRecipe}`
+      );
+      error.code = 404;
+      next(error);
+    }
+  } else {
+    const error: any = new Error(
+      "El formato del valor de la receta a borrar es incorrecto."
+    );
+    error.code = 400;
+    next(error);
+  }
+};
+
+const addFavorite = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const newFavoriteData: RecipeModified = req.body;
+  const originalFavoritesData: UserSchema = await User.findById(
+    newFavoriteData.id
+  );
+
+  if (newFavoriteData.newFavorite) {
+    try {
+      originalFavoritesData.myFavorites.push(newFavoriteData.newFavorite);
+
+      await originalFavoritesData.save();
+
+      debug(
+        chalk.bgGray.black(
+          `Receta añadida a los favoritos del usuario id:${
+            newFavoriteData.id
+          } correctamente ${"(´ ▽ `)b"}`
+        )
+      );
+      res.json({
+        Resultado: `Receta añadida a los favoritos del usuario id:${newFavoriteData.id} correctamente.`,
+      });
+    } catch {
+      const error: any = new Error(
+        "Se ha producido un fallo al añadir la receta a los favoritos del usuario."
+      );
+      error.code = 400;
+      next(error);
+    }
+  } else {
+    const error: any = new Error(
+      "El formato del valor de la receta a añadir a favoritos es incorrecto."
+    );
+    error.code = 400;
+    next(error);
+  }
+};
 
 const removeFavorite = () => {};
 
@@ -201,9 +296,9 @@ export {
   addUser,
   userLogin,
   modifyUser,
-  removeUser,
   addRecipe,
   removeRecipe,
   addFavorite,
   removeFavorite,
+  removeUser,
 };
