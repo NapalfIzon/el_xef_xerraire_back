@@ -17,8 +17,8 @@ export interface UserSchema {
   avatar: string;
   avatarBackup: string;
   registrationDate: Date;
-  myRecipes?: Array<string>;
-  myFavorites?: Array<string>;
+  myRecipes?: Array<string> | any;
+  myFavorites?: Array<string> | any;
   save?: Function;
   id?: string;
 }
