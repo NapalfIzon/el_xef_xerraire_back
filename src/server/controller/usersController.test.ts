@@ -4,6 +4,7 @@ import User from "../../database/models/user";
 import { UserSchema, UserRegistered } from "../../interfaces/usersInterfaces";
 import { mockedRequest, mockedResponse } from "../../mocks/mockedFunctions";
 import {
+  addFavorite,
   addRecipe,
   addUser,
   getUserById,
@@ -337,6 +338,44 @@ describe("Given a removeRecipe controller,", () => {
       userTest.save = jest.fn().mockResolvedValue(true);
 
       await removeRecipe(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(resText);
+    });
+  });
+});
+
+describe("Given an addFavorite controller,", () => {
+  describe("When it receives an incorrect recipe id", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      req.body = recipeAndFavoriteTest;
+      const next = jest.fn();
+      const errorProperty = "message";
+      const errorMessage =
+        "Se ha producido un fallo al añadir la receta a los favoritos del usuario.";
+      User.findById = jest.fn().mockResolvedValue(userTest);
+      userTest.myFavorites.push = jest.fn().mockRejectedValue("whatever");
+
+      await addFavorite(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives a registered id and a recipe id", () => {
+    test("Then it should invoke res.json confirming the recipe id was added in myFavorites list correctly.", async () => {
+      const req = mockedRequest();
+      req.body = recipeAndFavoriteTest;
+      const res = mockedResponse();
+      const resText = {
+        Resultado: `Receta añadida a los favoritos del usuario id:${recipeAndFavoriteTest.id} correctamente.`,
+      };
+      User.findById = jest.fn().mockReturnValue(userTest);
+      userTest.save = jest.fn().mockResolvedValue(true);
+
+      await addFavorite(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(resText);
     });
