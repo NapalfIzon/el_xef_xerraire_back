@@ -244,7 +244,47 @@ const removeRecipe = async (
   }
 };
 
-const addFavorite = () => {};
+const addFavorite = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const newFavoriteData: RecipeModified = req.body;
+  const originalFavoritesData: UserSchema = await User.findById(
+    newFavoriteData.id
+  );
+
+  if (newFavoriteData.newFavorite) {
+    try {
+      originalFavoritesData.myFavorites.push(newFavoriteData.newFavorite);
+
+      await originalFavoritesData.save();
+
+      debug(
+        chalk.bgGray.black(
+          `Receta añadida a los favoritos del usuario id:${
+            newFavoriteData.id
+          } correctamente ${"(´ ▽ `)b"}`
+        )
+      );
+      res.json({
+        Resultado: `Receta añadida a los favoritos del usuario id:${newFavoriteData.id} correctamente.`,
+      });
+    } catch {
+      const error: any = new Error(
+        "Se ha producido un fallo al añadir la receta a los favoritos del usuario."
+      );
+      error.code = 400;
+      next(error);
+    }
+  } else {
+    const error: any = new Error(
+      "El formato del valor de la receta a añadir a favoritos es incorrecto."
+    );
+    error.code = 400;
+    next(error);
+  }
+};
 
 const removeFavorite = () => {};
 
