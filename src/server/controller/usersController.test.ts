@@ -193,6 +193,25 @@ describe("Given a modifyUser controller,", () => {
 });
 
 describe("Given an addRecipe controller,", () => {
+  describe("When it receives an incorrect newRecipe format", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      const addedRecipeInfo = { ...recipeAndFavoriteTest };
+      req.body = addedRecipeInfo;
+      delete req.body.newRecipe;
+      const next = jest.fn();
+      const errorProperty = "message";
+      const errorMessage =
+        "El formato del valor de la receta a añadir es incorrecto.";
+
+      await addRecipe(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
   describe("When it receives an incorrect recipe id", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
@@ -307,6 +326,25 @@ describe("Given a removeRecipe controller,", () => {
 });
 
 describe("Given an addFavorite controller,", () => {
+  describe("When it receives an incorrect newFavorite format,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      const addedFavoriteRecipeInfo = { ...recipeAndFavoriteTest };
+      req.body = addedFavoriteRecipeInfo;
+      delete req.body.newFavorite;
+      const next = jest.fn();
+      const errorProperty = "message";
+      const errorMessage =
+        "El formato del valor de la receta a añadir a favoritos es incorrecto.";
+
+      await addFavorite(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
   describe("When it receives an incorrect recipe id", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
