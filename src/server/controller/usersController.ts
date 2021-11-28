@@ -286,7 +286,59 @@ const addFavorite = async (
   }
 };
 
-const removeFavorite = () => {};
+const removeFavorite = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const deletedFavoriteRecipeData: RecipeModified = req.body;
+  const originalRecipesData: any = await User.findById(
+    deletedFavoriteRecipeData.id
+  );
+
+  if (deletedFavoriteRecipeData.deletedFavorite) {
+    if (
+      originalRecipesData.myFavorites.includes(
+        deletedFavoriteRecipeData.deletedFavorite
+      )
+    ) {
+      try {
+        originalRecipesData.myFavorites.remove(
+          deletedFavoriteRecipeData.deletedFavorite
+        );
+        await originalRecipesData.save();
+        debug(
+          chalk.bgGray.black(
+            `Receta borrada de favoritos al usuario id:${
+              deletedFavoriteRecipeData.id
+            } correctamente ${"(´ ▽ `)b"}`
+          )
+        );
+        res.json({
+          Resultado: `Receta borrada de favoritos al usuario id:${deletedFavoriteRecipeData.id} correctamente.`,
+        });
+      } catch {
+        const error: any = new Error(
+          "Se ha producido un fallo al borrar la receta de favoritos al usuario."
+        );
+        error.code = 400;
+        next(error);
+      }
+    } else {
+      const error: any = new Error(
+        `El usuario id: ${deletedFavoriteRecipeData.id} no tiene receta añadida a favoritos con id: ${deletedFavoriteRecipeData.deletedFavorite}`
+      );
+      error.code = 404;
+      next(error);
+    }
+  } else {
+    const error: any = new Error(
+      "El formato del valor de la receta a borrar de favoritos es incorrecto."
+    );
+    error.code = 400;
+    next(error);
+  }
+};
 
 const removeUser = () => {};
 
