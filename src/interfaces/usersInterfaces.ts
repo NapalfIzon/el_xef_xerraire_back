@@ -15,21 +15,12 @@ export interface UserSchema {
   email: string;
   password: string;
   avatar: string;
-  avatarBackup: string;
-  registrationDate: Date;
+  avatarBackup?: string;
+  registrationDate?: Date;
   myRecipes?: Array<string> | any;
   myFavorites?: Array<string> | any;
   save?: Function;
   id?: string;
-}
-
-export interface NewUser {
-  username: string;
-  email: string;
-  password: string;
-  avatar: string;
-  avatarBackup: string;
-  registrationDate: Date;
 }
 
 export interface UserRegistered {

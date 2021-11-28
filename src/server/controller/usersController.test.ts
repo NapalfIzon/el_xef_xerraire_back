@@ -1,7 +1,12 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../../database/models/user";
-import { UserSchema, UserRegistered } from "../../interfaces/usersInterfaces";
+import {
+  userTest,
+  newUserTest,
+  userLoginTest,
+  recipeAndFavoriteTest,
+} from "../../mocks/mockedVariables";
 import { mockedRequest, mockedResponse } from "../../mocks/mockedFunctions";
 import {
   addFavorite,
@@ -15,46 +20,6 @@ import {
 } from "./usersController";
 
 jest.mock("../../database/models/user");
-
-const userTest: UserSchema = {
-  id: "12345",
-  username: "test",
-  email: "test@test.com",
-  password: "$2b$10$C8IeRGecLr60m88.B0JEkOqEdzboyKy0jZeCLHX4jBsOipPNpi7Iq",
-  avatar: "/IMG/test.webp",
-  avatarBackup: "/IMG/test.webp",
-  registrationDate: new Date("2021-11-27T15:19:05.521Z"),
-  myRecipes: ["testMyRecipe"],
-  myFavorites: ["testFavoriteRecipe"],
-};
-
-const newUserTest = {
-  id: "12345",
-  username: "test",
-  email: "test@test.com",
-  password: "test",
-  avatar: "/IMG/test.webp",
-  myRecipes: ["testMyRecipe"],
-  myFavorites: ["testFavoriteRecipe"],
-};
-
-const userLoginTest = async () => {
-  const userData: UserRegistered = {
-    id: "whatever",
-    email: "test@test.com",
-    password: await bcrypt.hash("test", 10),
-  };
-
-  return userData;
-};
-
-const recipeAndFavoriteTest = {
-  id: "12345",
-  newRecipe: "testMyRecipe",
-  newFavorite: "testFavoriteRecipe",
-  deletedRecipe: "testMyRecipe",
-  deletedFavorite: "testFavoriteRecipe",
-};
 
 describe("Given a getUserById controller,", () => {
   describe("When it receices a request with an inexistent user id in the params,", () => {
@@ -148,7 +113,7 @@ describe("Given an userLogin controller,", () => {
   describe("When it receives a non registered email,", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
-      const testingUser: UserRegistered = await userLoginTest();
+      const testingUser = userLoginTest();
       req.body = testingUser;
       const next = jest.fn();
       User.findOne = jest.fn().mockResolvedValue(false);
@@ -164,7 +129,7 @@ describe("Given an userLogin controller,", () => {
   describe("When it receives a registered email and an incorrect password,", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
-      const testingUser: UserRegistered = await userLoginTest();
+      const testingUser = userLoginTest();
       req.body = testingUser;
       const next = jest.fn();
       User.findOne = jest.fn().mockResolvedValue(true);
@@ -181,7 +146,7 @@ describe("Given an userLogin controller,", () => {
   describe("When it receives a registered email and password,", () => {
     test("The it should invoke res.json with a generated token.", async () => {
       const req = mockedRequest();
-      const testingUser: UserRegistered = await userLoginTest();
+      const testingUser = userLoginTest();
       req.body = testingUser;
       const res = mockedResponse();
       const testingToken = { token: "generate.tested.token" };

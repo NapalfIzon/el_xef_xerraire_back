@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../../database/models/user";
 import {
-  NewUser,
   UserModified,
   UserRegistered,
   UserSchema,
@@ -46,7 +45,7 @@ const addUser = async (
   const { username, email, password, avatar } = req.body;
 
   const userRegistered: UserRegistered = await User.findOne({ email });
-  console.log(userRegistered);
+
   if (userRegistered) {
     const error: any = new Error("Email ya registrado.");
     error.code = 401;
@@ -54,7 +53,7 @@ const addUser = async (
   } else {
     try {
       const encryptedPassword = await bcrypt.hash(password, 10);
-      const newUser: NewUser = {
+      const newUser: UserSchema = {
         username,
         email,
         password: encryptedPassword,
