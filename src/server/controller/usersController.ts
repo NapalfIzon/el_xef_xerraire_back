@@ -295,7 +295,6 @@ const removeFavorite = async (
   const originalRecipesData: any = await User.findById(
     deletedFavoriteRecipeData.id
   );
-
   if (deletedFavoriteRecipeData.deletedFavorite) {
     if (
       originalRecipesData.myFavorites.includes(
