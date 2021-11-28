@@ -35,7 +35,7 @@ export interface NewUser {
 export interface UserRegistered {
   id?: string;
   email?: string;
-  username: string;
+  username?: string;
   password: string;
 }
 
