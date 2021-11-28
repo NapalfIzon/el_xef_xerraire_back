@@ -9,6 +9,7 @@ import {
   addUser,
   getUserById,
   modifyUser,
+  removeFavorite,
   removeRecipe,
   userLogin,
 } from "./usersController";
@@ -376,6 +377,83 @@ describe("Given an addFavorite controller,", () => {
       userTest.save = jest.fn().mockResolvedValue(true);
 
       await addFavorite(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(resText);
+    });
+  });
+});
+
+describe("Given a removeFavorite controller,", () => {
+  describe("When it receives an incorrect deletedFavorite format,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      const deletedFavoriteRecipeInfo = { ...recipeAndFavoriteTest };
+      req.body = deletedFavoriteRecipeInfo;
+      delete req.body.deletedFavorite;
+      const next = jest.fn();
+
+      await removeFavorite(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty("message");
+      expect(next.mock.calls[0][0].message).toBe(
+        "El formato del valor de la receta a borrar de favoritos es incorrecto."
+      );
+    });
+  });
+
+  describe("When it receives an non registered recipe id in myFavorites list,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      const deletedFavoriteRecipeInfo = { ...recipeAndFavoriteTest };
+      deletedFavoriteRecipeInfo.deletedFavorite = "whatever";
+      req.body = deletedFavoriteRecipeInfo;
+      const errorProperty = "message";
+      const errorMessage = `El usuario id: ${deletedFavoriteRecipeInfo.id} no tiene receta añadida a favoritos con id: ${deletedFavoriteRecipeInfo.deletedFavorite}`;
+      const next = jest.fn();
+      User.findById = jest.fn().mockReturnValue(userTest);
+
+      await removeFavorite(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives a favorite recipe id in myFavorites list but it can't be removed,", () => {
+    test("Then it should invoke next function with an error message.", async () => {
+      const req = mockedRequest();
+      const deletedFavoriteRecipeInfo = { ...recipeAndFavoriteTest };
+      req.body = deletedFavoriteRecipeInfo;
+      const errorProperty = "message";
+      const errorMessage =
+        "Se ha producido un fallo al borrar la receta de favoritos al usuario.";
+      const next = jest.fn();
+      User.findById = jest.fn().mockReturnValue(userTest);
+      userTest.myFavorites.remove = jest.fn().mockRejectedValue("whatever");
+
+      await removeFavorite(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives a recipe id equal to a recipe id in myFavorites list of the user,", () => {
+    test("Then it should invoke res.json with a confirmation message.", async () => {
+      const req = mockedRequest();
+      req.body = recipeAndFavoriteTest;
+      const res = mockedResponse();
+      const resText = {
+        Resultado: `Receta borrada de favoritos al usuario id:${recipeAndFavoriteTest.id} correctamente.`,
+      };
+      User.findById = jest.fn().mockReturnValue(userTest);
+      userTest.myFavorites.remove = jest.fn().mockResolvedValue("whatever");
+      userTest.save = jest.fn().mockResolvedValue(true);
+
+      await removeFavorite(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(resText);
     });
