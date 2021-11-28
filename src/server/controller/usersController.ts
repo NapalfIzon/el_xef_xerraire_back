@@ -43,33 +43,33 @@ const addUser = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const userData = req.body;
+  const { username, email, password, avatar } = req.body;
 
-  const userRegistered: UserRegistered = await User.findOne(userData.email);
-
+  const userRegistered: UserRegistered = await User.findOne({ email });
+  console.log(userRegistered);
   if (userRegistered) {
     const error: any = new Error("Email ya registrado.");
     error.code = 401;
     next(error);
   } else {
     try {
-      const password = await bcrypt.hash(userData.password, 10);
+      const encryptedPassword = await bcrypt.hash(password, 10);
       const newUser: NewUser = {
-        username: userData.username,
-        email: userData.email,
-        password,
-        avatar: userData.avatar,
-        avatarBackup: userData.avatar,
+        username,
+        email,
+        password: encryptedPassword,
+        avatar,
+        avatarBackup: avatar,
         registrationDate: new Date(),
       };
       await User.create(newUser);
       debug(
         chalk.bgGray.black(
-          `Usuario ${userData.username} guardado correctamente ${"(´ ▽ `)b"}`
+          `Usuario ${username} guardado correctamente ${"(´ ▽ `)b"}`
         )
       );
       res.json({
-        Resultado: `Usuario ${userData.username} guardado correctamente.`,
+        Resultado: `Usuario ${username} guardado correctamente.`,
       });
     } catch {
       const error: any = new Error(
@@ -339,7 +339,41 @@ const removeFavorite = async (
   }
 };
 
-const removeUser = () => {};
+const removeUser = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const { id } = req.params;
+  const isIdRegistered: UserSchema = await User.findById(id);
+
+  if (isIdRegistered) {
+    try {
+      await User.findByIdAndDelete(id);
+      debug(
+        chalk.bgGray.black(
+          `Se ha eliminado correctamente al usuario ${id} ${"(´ ▽ `)b"}`
+        )
+      );
+
+      res.json({
+        resultado: `Se ha eliminado correctamente al usuario ${id}`,
+      });
+    } catch {
+      const error: any = new Error(
+        `No se ha podido eliminar al usuario id: ${id}`
+      );
+      error.code = 500;
+      error.status = 500;
+      next(error);
+    }
+  } else {
+    const error: any = new Error(`No se ha encontrado al usuario id: ${id}`);
+    error.code = 404;
+    error.status = 404;
+    next(error);
+  }
+};
 
 export {
   getUserById,
