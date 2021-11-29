@@ -28,7 +28,7 @@ describe("Given a getUserById controller,", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
       req.params = { ...testUserId };
-      User.findById = jest.fn().mockRejectedValue("error");
+      User.findById = jest.fn().mockRejectedValue("random error");
       const next = jest.fn();
 
       await getUserById(req, null, next);
@@ -75,7 +75,7 @@ describe("Given an addUser controller,", () => {
       req.body = newUserTest;
       const next = jest.fn();
       User.findOne = jest.fn().mockResolvedValue(false);
-      User.create = jest.fn().mockRejectedValue("whatever");
+      User.create = jest.fn().mockRejectedValue("random error");
 
       await addUser(req, null, next);
 
@@ -163,7 +163,7 @@ describe("Given a modifyUser controller,", () => {
       const req = mockedRequest();
       req.body = newUserTest;
       const next = jest.fn();
-      User.findByIdAndUpdate = jest.fn().mockRejectedValue("whatever");
+      User.findByIdAndUpdate = jest.fn().mockRejectedValue("random error");
 
       await modifyUser(req, null, next);
 
@@ -218,7 +218,7 @@ describe("Given an addRecipe controller,", () => {
       req.body = recipeAndFavoriteTest;
       const next = jest.fn();
       User.findById = jest.fn().mockResolvedValue(userTest);
-      userTest.myRecipes.push = jest.fn().mockRejectedValue("whatever");
+      userTest.save = jest.fn().mockRejectedValue("random error");
 
       await addRecipe(req, null, next);
 
@@ -271,7 +271,7 @@ describe("Given a removeRecipe controller,", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
       const deletedRecipeInfo = { ...recipeAndFavoriteTest };
-      deletedRecipeInfo.deletedRecipe = "whatever";
+      deletedRecipeInfo.deletedRecipe = "randomRecipeId";
       req.body = deletedRecipeInfo;
       const errorProperty = "message";
       const errorMessage = `El usuario id: ${deletedRecipeInfo.id} no tiene receta añadida con id: ${deletedRecipeInfo.deletedRecipe}`;
@@ -296,7 +296,7 @@ describe("Given a removeRecipe controller,", () => {
         "Se ha producido un fallo al borrar la receta al usuario.";
       const next = jest.fn();
       User.findById = jest.fn().mockReturnValue(userTest);
-      userTest.myRecipes.remove = jest.fn().mockRejectedValue("whatever");
+      userTest.save = jest.fn().mockRejectedValue("random error");
 
       await removeRecipe(req, null, next);
 
@@ -315,7 +315,7 @@ describe("Given a removeRecipe controller,", () => {
         Resultado: `Receta borrada al usuario id:${recipeAndFavoriteTest.id} correctamente.`,
       };
       User.findById = jest.fn().mockReturnValue(userTest);
-      userTest.myRecipes.remove = jest.fn().mockResolvedValue("whatever");
+      userTest.myRecipes.remove = jest.fn().mockResolvedValue("randomRecipeId");
       userTest.save = jest.fn().mockResolvedValue(true);
 
       await removeRecipe(req, res, null);
@@ -354,7 +354,7 @@ describe("Given an addFavorite controller,", () => {
       const errorMessage =
         "Se ha producido un fallo al añadir la receta a los favoritos del usuario.";
       User.findById = jest.fn().mockResolvedValue(userTest);
-      userTest.myFavorites.push = jest.fn().mockRejectedValue("whatever");
+      userTest.save = jest.fn().mockRejectedValue("random error");
 
       await addFavorite(req, null, next);
 
@@ -405,7 +405,7 @@ describe("Given a removeFavorite controller,", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
       const deletedFavoriteRecipeInfo = { ...recipeAndFavoriteTest };
-      deletedFavoriteRecipeInfo.deletedFavorite = "whatever";
+      deletedFavoriteRecipeInfo.deletedFavorite = "randomFavoriteRecipeId";
       req.body = deletedFavoriteRecipeInfo;
       const errorProperty = "message";
       const errorMessage = `El usuario id: ${deletedFavoriteRecipeInfo.id} no tiene receta añadida a favoritos con id: ${deletedFavoriteRecipeInfo.deletedFavorite}`;
@@ -430,7 +430,7 @@ describe("Given a removeFavorite controller,", () => {
         "Se ha producido un fallo al borrar la receta de favoritos al usuario.";
       const next = jest.fn();
       User.findById = jest.fn().mockReturnValue(userTest);
-      userTest.myFavorites.remove = jest.fn().mockRejectedValue("whatever");
+      userTest.save = jest.fn().mockRejectedValue("random error");
 
       await removeFavorite(req, null, next);
 
@@ -449,7 +449,9 @@ describe("Given a removeFavorite controller,", () => {
         Resultado: `Receta borrada de favoritos al usuario id:${recipeAndFavoriteTest.id} correctamente.`,
       };
       User.findById = jest.fn().mockReturnValue(userTest);
-      userTest.myFavorites.remove = jest.fn().mockResolvedValue("whatever");
+      userTest.myFavorites.remove = jest
+        .fn()
+        .mockResolvedValue("randomFavoriteRecipeId");
       userTest.save = jest.fn().mockResolvedValue(true);
 
       await removeFavorite(req, res, null);
@@ -485,7 +487,7 @@ describe("Given a removeUser controller,", () => {
       const errorMessage = `No se ha podido eliminar al usuario id: ${req.params.id}`;
       const next = jest.fn();
       User.findById = jest.fn().mockReturnValue(userTest);
-      User.findByIdAndDelete = jest.fn().mockRejectedValue("whatever");
+      User.findByIdAndDelete = jest.fn().mockRejectedValue("random error");
 
       await removeUser(req, null, next);
 
@@ -504,7 +506,7 @@ describe("Given a removeUser controller,", () => {
         resultado: `Se ha eliminado correctamente al usuario ${req.params.id}`,
       };
       User.findById = jest.fn().mockReturnValue(userTest);
-      User.findByIdAndDelete = jest.fn().mockReturnValue("whatever");
+      User.findByIdAndDelete = jest.fn().mockReturnValue("randomUserId");
 
       await removeUser(req, res, null);
 
