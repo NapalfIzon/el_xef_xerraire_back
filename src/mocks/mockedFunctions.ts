@@ -10,4 +10,6 @@ const mockedResponse = () => {
   return response;
 };
 
-export { mockedRequest, mockedResponse };
+const mockedNext = jest.fn();
+
+export { mockedRequest, mockedResponse, mockedNext };

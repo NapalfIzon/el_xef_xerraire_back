@@ -6,6 +6,7 @@ import {
   RecipeModified,
 } from "../interfaces/usersInterface";
 import { AuthType } from "../interfaces/authInterface";
+import { RecipeSchema } from "../interfaces/recipesInterface";
 
 dotenv.config();
 
@@ -62,6 +63,29 @@ const authorizationHeaderRequestOk: AuthType = {
     "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InRlc3RJZCJ9.b6HmQLN46F-SRnxFOmp1HmFMF2zp_HuPHcJEFeccD_c",
 };
 
+const testRecipeId: object = {
+  id: "12345",
+};
+
+const recipeTest: RecipeSchema = {
+  id: "12345",
+  title: "Huevo frito con arroz",
+  description: "Una receta muy sencilla para salir del paso.",
+  category: 1,
+  ingredients: ["arroz", "aceite", "sal", "huevo"],
+  tools: ["sartén"],
+  steps: [
+    "Calieta el arroz ya hecho",
+    "Pon el arróz caliente en un plato",
+    "Coge la sartén y pon aceite",
+    "Calienta el aceite",
+    "Parte el huevo y fríelo en el aceite caliente",
+    "Cuando el huevo esté hecho, sácalo de la sartén con una espátula y ponlo encima del arróz",
+  ],
+  image: "https://firebase",
+  imageBackup: "/Images/rutaLocal",
+};
+
 export {
   userTest,
   newUserTest,
@@ -70,4 +94,6 @@ export {
   testUserId,
   authorizationHeaderRequestKo,
   authorizationHeaderRequestOk,
+  testRecipeId,
+  recipeTest,
 };
