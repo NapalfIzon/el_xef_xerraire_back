@@ -8,6 +8,7 @@ export interface RecipesPaths {
 }
 
 export interface RecipeSchema {
+  id?: string;
   title: string;
   description: string;
   category: number;
