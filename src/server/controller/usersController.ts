@@ -18,7 +18,7 @@ const getUserById = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const { id } = req.params;
+  const { id } = req.body;
 
   try {
     const userData: UserSchema = await User.findById(id);
@@ -358,7 +358,7 @@ const removeUser = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const { id } = req.params;
+  const { id } = req.body;
   const isIdRegistered: UserSchema = await User.findById(id);
 
   if (isIdRegistered) {

@@ -1,11 +1,11 @@
 import { UsersPaths } from "../../interfaces/usersInterfaces";
 
 const usersPath: UsersPaths = {
-  getUserById: "/user/:id",
+  getUserById: "/getuser",
   addUser: "/new",
   userLogin: "/login",
   modifyUser: "/modifyuser",
-  removeUser: "/user/:id",
+  removeUser: "/removeuser",
   addRecipe: "/addrecipe",
   removeRecipe: "/removerecipe",
   addFavorite: "/addfavorite",
