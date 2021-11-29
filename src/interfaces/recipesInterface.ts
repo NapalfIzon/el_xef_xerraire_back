@@ -6,3 +6,14 @@ export interface RecipesPaths {
   modifyRecipe: string;
   removeRecipe: string;
 }
+
+export interface RecipeSchema {
+  title: string;
+  description: string;
+  category: number;
+  ingredients: Array<string>;
+  tools?: Array<string>;
+  steps: Array<string>;
+  image: string;
+  imageBackup?: string;
+}
