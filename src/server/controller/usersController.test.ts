@@ -27,7 +27,7 @@ describe("Given a getUserById controller,", () => {
   describe("When it receices a request with an inexistent user id in the params,", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
-      req.params = { ...testUserId };
+      req.body = { ...testUserId };
       User.findById = jest.fn().mockRejectedValue("random error");
       const next = jest.fn();
 
@@ -42,7 +42,7 @@ describe("Given a getUserById controller,", () => {
   describe("When it receives a request with an user id in the params,", () => {
     test("Then it should invoke res.json with the data of the user.", async () => {
       const req = mockedRequest();
-      req.params = { ...testUserId };
+      req.body = { ...testUserId };
       User.findById = jest.fn().mockResolvedValue(userTest);
       const res = mockedResponse();
 
@@ -465,9 +465,9 @@ describe("Given a removeUser controller,", () => {
   describe("When it receives a non registered user id,", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
-      req.params = { ...testUserId };
+      req.body = { ...testUserId };
       const errorProperty = "message";
-      const errorMessage = `No se ha encontrado al usuario id: ${req.params.id}`;
+      const errorMessage = `No se ha encontrado al usuario id: ${req.body.id}`;
       const next = jest.fn();
       User.findById = jest.fn().mockReturnValue(false);
 
@@ -482,9 +482,9 @@ describe("Given a removeUser controller,", () => {
   describe("When it receives a registered user id but it can't be deleted,", () => {
     test("Then it should invoke next function with an error message.", async () => {
       const req = mockedRequest();
-      req.params = { ...testUserId };
+      req.body = { ...testUserId };
       const errorProperty = "message";
-      const errorMessage = `No se ha podido eliminar al usuario id: ${req.params.id}`;
+      const errorMessage = `No se ha podido eliminar al usuario id: ${req.body.id}`;
       const next = jest.fn();
       User.findById = jest.fn().mockReturnValue(userTest);
       User.findByIdAndDelete = jest.fn().mockRejectedValue("random error");
@@ -500,10 +500,10 @@ describe("Given a removeUser controller,", () => {
   describe("When it receives a registered user id,", () => {
     test("Then it should invoke res.json confirming the deleted id.", async () => {
       const req = mockedRequest();
-      req.params = { ...testUserId };
+      req.body = { ...testUserId };
       const res = mockedResponse();
       const resText = {
-        resultado: `Se ha eliminado correctamente al usuario ${req.params.id}`,
+        resultado: `Se ha eliminado correctamente al usuario ${req.body.id}`,
       };
       User.findById = jest.fn().mockReturnValue(userTest);
       User.findByIdAndDelete = jest.fn().mockReturnValue("randomUserId");
