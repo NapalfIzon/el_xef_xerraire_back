@@ -16,3 +16,6 @@ jobs:
 
       - name: Testing
         run: npm test
+        env:
+          RANDOM_PASSWORD_1: $2b$10$C8IeRGecLr60m88.B0JEkOqEdzboyKy0jZeCLHX4jBsOipPNpi7Iq
+          RANDOM_PASSWORD_2: test
