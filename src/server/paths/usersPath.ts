@@ -1,4 +1,4 @@
-import { UsersPaths } from "../../interfaces/usersInterfaces";
+import { UsersPaths } from "../../interfaces/usersInterface";
 
 const usersPath: UsersPaths = {
   getUserById: "/getuser",

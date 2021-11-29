@@ -4,7 +4,7 @@ import {
   UserSchema,
   UserRegistered,
   RecipeModified,
-} from "../interfaces/usersInterfaces";
+} from "../interfaces/usersInterface";
 import { AuthType } from "../interfaces/authInterface";
 
 dotenv.config();
