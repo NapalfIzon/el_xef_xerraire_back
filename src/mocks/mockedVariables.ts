@@ -1,3 +1,4 @@
+import dotenv from "dotenv";
 import bcrypt from "bcrypt";
 import {
   UserSchema,
@@ -5,11 +6,13 @@ import {
   RecipeModified,
 } from "../interfaces/usersInterfaces";
 
+dotenv.config();
+
 const userTest: UserSchema = {
   id: "12345",
   username: "test",
   email: "test@test.com",
-  password: "$2b$10$C8IeRGecLr60m88.B0JEkOqEdzboyKy0jZeCLHX4jBsOipPNpi7Iq",
+  password: process.env.RANDOM_PASSWORD_1,
   avatar: "/IMG/test.webp",
   avatarBackup: "/IMG/test.webp",
   registrationDate: new Date("2021-11-27T15:19:05.521Z"),
@@ -21,7 +24,7 @@ const newUserTest: UserSchema = {
   id: "12345",
   username: "test",
   email: "test@test.com",
-  password: "test",
+  password: process.env.RANDOM_PASSWORD_2,
   avatar: "/IMG/test.webp",
   myRecipes: ["testMyRecipe"],
   myFavorites: ["testFavoriteRecipe"],
@@ -29,9 +32,9 @@ const newUserTest: UserSchema = {
 
 const userLoginTest = async () => {
   const userData: UserRegistered = {
-    id: "whatever",
+    id: "12345",
     email: "test@test.com",
-    password: await bcrypt.hash("test", 10),
+    password: await bcrypt.hash(process.env.RANDOM_PASSWORD_2, 10),
   };
 
   return userData;

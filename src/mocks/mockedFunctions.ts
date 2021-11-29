@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
 
-const mockedRequest = () => {
-  const req = {} as Request;
-  return req;
-};
+const mockedRequest = () => ({} as Request);
 
 const mockedResponse = () => {
   const response = {} as Response;

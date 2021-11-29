@@ -91,7 +91,7 @@ const userLogin = async (
   const userRegistered: UserRegistered = await User.findOne({ email });
 
   if (userRegistered) {
-    const isPasswordOk: Boolean = await bcrypt.compare(
+    const isPasswordOk: boolean = await bcrypt.compare(
       password,
       userRegistered.password
     );
@@ -151,6 +151,7 @@ const modifyUser = async (
   } catch {
     const error: any = new Error("Formato de datos incorrectos.");
     error.code = 400;
+    error.status = 400;
     next(error);
   }
 };
@@ -160,37 +161,48 @@ const addRecipe = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const newRecipeData: RecipeModified = req.body;
-  const originalRecipesData: UserSchema = await User.findById(newRecipeData.id);
+  try {
+    const newRecipeData: RecipeModified = req.body;
+    const originalRecipesData: UserSchema = await User.findById(
+      newRecipeData.id
+    );
 
-  if (newRecipeData.newRecipe) {
-    try {
-      originalRecipesData.myRecipes.push(newRecipeData.newRecipe);
-
-      await originalRecipesData.save();
-
-      debug(
-        chalk.bgGray.black(
-          `Receta añadida al usuario id:${
-            newRecipeData.id
-          } correctamente ${"(´ ▽ `)b"}`
-        )
-      );
-      res.json({
-        Resultado: `Receta añadida al usuario id:${newRecipeData.id} correctamente.`,
-      });
-    } catch {
+    if (!newRecipeData.newRecipe) {
       const error: any = new Error(
-        "Se ha producido un fallo al añadir la receta al usuario."
+        "El formato del valor de la receta a añadir es incorrecto."
       );
       error.code = 400;
+      error.status = 400;
       next(error);
+    } else {
+      try {
+        originalRecipesData.myRecipes.push(newRecipeData.newRecipe);
+
+        await originalRecipesData.save();
+
+        debug(
+          chalk.bgGray.black(
+            `Receta añadida al usuario id:${
+              newRecipeData.id
+            } correctamente ${"(´ ▽ `)b"}`
+          )
+        );
+        res.json({
+          Resultado: `Receta añadida al usuario id:${newRecipeData.id} correctamente.`,
+        });
+      } catch {
+        const error: any = new Error(
+          "Se ha producido un fallo al añadir la receta al usuario."
+        );
+        error.code = 400;
+        error.status = 400;
+        next(error);
+      }
     }
-  } else {
-    const error: any = new Error(
-      "El formato del valor de la receta a añadir es incorrecto."
-    );
-    error.code = 400;
+  } catch (error) {
+    error.message = "Error indeterminado.";
+    error.code = 500;
+    error.status = 500;
     next(error);
   }
 };
@@ -225,6 +237,7 @@ const removeRecipe = async (
           "Se ha producido un fallo al borrar la receta al usuario."
         );
         error.code = 400;
+        error.status = 400;
         next(error);
       }
     } else {
@@ -274,6 +287,7 @@ const addFavorite = async (
         "Se ha producido un fallo al añadir la receta a los favoritos del usuario."
       );
       error.code = 400;
+      error.status = 400;
       next(error);
     }
   } else {
@@ -320,6 +334,7 @@ const removeFavorite = async (
           "Se ha producido un fallo al borrar la receta de favoritos al usuario."
         );
         error.code = 400;
+        error.status = 400;
         next(error);
       }
     } else {
