@@ -5,6 +5,7 @@ import {
   UserRegistered,
   RecipeModified,
 } from "../interfaces/usersInterfaces";
+import { AuthType } from "../interfaces/authInterface";
 
 dotenv.config();
 
@@ -52,10 +53,21 @@ const testUserId: object = {
   id: "12345",
 };
 
+const authorizationHeaderRequestKo: AuthType = {
+  Authorization: "random",
+};
+
+const authorizationHeaderRequestOk: AuthType = {
+  Authorization:
+    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InRlc3RJZCJ9.b6HmQLN46F-SRnxFOmp1HmFMF2zp_HuPHcJEFeccD_c",
+};
+
 export {
   userTest,
   newUserTest,
   userLoginTest,
   recipeAndFavoriteTest,
   testUserId,
+  authorizationHeaderRequestKo,
+  authorizationHeaderRequestOk,
 };
