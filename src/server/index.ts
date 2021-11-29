@@ -5,6 +5,7 @@ import morgan from "morgan";
 import cors from "cors";
 import { notFoundHandler, finalErrorHandler } from "./middlewares/error";
 import usersRoutes from "./routes/usersRoutes";
+import recipesRoutes from "./routes/recipesRoutes";
 
 const debug = Debug("xerrAPI:server");
 
@@ -52,6 +53,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/users", usersRoutes);
+
+app.use("/recipes", recipesRoutes);
 
 app.use(notFoundHandler);
 

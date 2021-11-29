@@ -9,7 +9,7 @@ import {
   UserRegistered,
   UserSchema,
   RecipeModified,
-} from "../../interfaces/usersInterfaces";
+} from "../../interfaces/usersInterface";
 
 const debug = Debug("xerrAPI:usersController");
 
