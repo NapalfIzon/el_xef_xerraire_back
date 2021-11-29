@@ -12,7 +12,7 @@ const auth = async (
   const authorizationData = req.header("Authorization");
 
   if (authorizationData) {
-    const token = authorizationData.split(" ")[1];
+    const token = authorizationData.split(" ")[1];
 
     if (token) {
       try {
