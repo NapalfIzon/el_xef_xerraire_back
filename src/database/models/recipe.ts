@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { RecipeSchema } from "../../interfaces/recipesInterface";
 
 const recipeSchema = new Schema({
   title: {
@@ -39,6 +40,6 @@ const recipeSchema = new Schema({
   },
 });
 
-const Recipe = model("Recipe", recipeSchema, "recipes");
+const Recipe = model<RecipeSchema>("Recipe", recipeSchema, "recipes");
 
 export default Recipe;
