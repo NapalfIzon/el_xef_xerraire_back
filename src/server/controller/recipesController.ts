@@ -30,7 +30,46 @@ const getRecipeById = async (
   }
 };
 
-const searchRecipe = () => {};
+const searchRecipe = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const { searchValue } = req.body;
+
+  try {
+    if (searchValue === undefined || searchValue.length === 0) {
+      const error: any = new Error(
+        "El formato de la palabra a buscar no es el correcto."
+      );
+      error.code = 400;
+      error.status = 400;
+      next(error);
+    } else {
+      const recipesData = await Recipe.find({
+        title: {
+          $regex: searchValue,
+          $options: "i",
+        },
+      });
+
+      debug(
+        chalk.bgGray.black(
+          `Se han buscado recetas relaciondas con el término '${searchValue}' ${"(´ ▽ `)b"}`
+        )
+      );
+
+      res.json(recipesData);
+    }
+  } catch {
+    const error: any = new Error(
+      `No se ha encontrado la receta con el término '${searchValue}'`
+    );
+    error.code = 404;
+    error.status = 404;
+    next(error);
+  }
+};
 
 const addRecipe = () => {};
 
