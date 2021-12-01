@@ -71,7 +71,43 @@ const searchRecipe = async (
   }
 };
 
-const addRecipe = () => {};
+const addRecipe = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const { title, description, category, ingredients, tools, steps, image } =
+    req.body;
+
+  try {
+    const newRecipe: RecipeSchema = {
+      title,
+      description,
+      category,
+      ingredients,
+      tools,
+      steps,
+      image,
+      imageBackup: image,
+    };
+
+    await Recipe.create(newRecipe);
+
+    debug(
+      chalk.bgGray.black(
+        `Receta '${title}'' creada correctamente ${"(´ ▽ `)b"}`
+      )
+    );
+    res.json({
+      Resultado: `Receta '${title}'' creada correctamente.`,
+    });
+  } catch {
+    const error: any = new Error("No se ha podido crear la receta.");
+    error.code = 400;
+    error.status = 400;
+    next(error);
+  }
+};
 
 const uploadVote = () => {};
 
