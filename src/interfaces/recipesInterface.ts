@@ -19,4 +19,6 @@ export interface RecipeSchema {
   steps: Array<string>;
   image: string;
   imageBackup?: string;
+  valoration: number;
+  quantityValorations: number;
 }
