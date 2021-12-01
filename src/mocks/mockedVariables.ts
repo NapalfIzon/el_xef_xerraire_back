@@ -71,7 +71,7 @@ const recipeTest: RecipeSchema = {
   id: "12345",
   title: "Huevo frito con arroz",
   description: "Una receta muy sencilla para salir del paso.",
-  category: 1,
+  category: "Arroces",
   ingredients: ["arroz", "aceite", "sal", "huevo"],
   tools: ["sartén"],
   steps: [

@@ -3,10 +3,62 @@ import chalk from "chalk";
 import Debug from "debug";
 import Recipe from "../../database/models/recipe";
 import { RecipeSchema } from "../../interfaces/recipesInterface";
+import categories from "../../utils/categories";
 
 const debug = Debug("xerrAPI:recipesController");
 
-const getRecipeById = async (
+const getRecipes = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  try {
+    const recipesData: Array<object> = await Recipe.find().limit(8);
+    debug(
+      chalk.bgGray.black(
+        `Se ha generado una lista de recetas correctamente ${"(´ ▽ `)b"}`
+      )
+    );
+
+    res.json(recipesData);
+  } catch {
+    const error: any = new Error(`No se han encontrado recetas (BB.DD vacía)`);
+    error.code = 404;
+    error.status = 404;
+    next(error);
+  }
+};
+
+const getRandomRecipes = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const randomCategory = categories[Math.floor(Math.random() * 22)];
+
+  try {
+    const randomRecipesData: object = await Recipe.findOne({
+      category: randomCategory,
+    });
+
+    debug(
+      chalk.bgGray.black(
+        `Se ha generado una receta random correctamente ${"(´ ▽ `)b"}`
+      )
+    );
+
+    res.json(randomRecipesData);
+  } catch {
+    const error: any = new Error(
+      `No se han encontrado recetas random (BB.DD vacía)`
+    );
+    error.code = 404;
+    error.status = 404;
+    next(error);
+  }
+};
+
+const getRecipe = async (
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
@@ -47,10 +99,20 @@ const searchRecipe = async (
       next(error);
     } else {
       const recipesData = await Recipe.find({
-        title: {
-          $regex: searchValue,
-          $options: "i",
-        },
+        $or: [
+          {
+            title: {
+              $regex: searchValue,
+              $options: "i",
+            },
+          },
+          {
+            category: {
+              $regex: searchValue,
+              $options: "i",
+            },
+          },
+        ],
       });
 
       debug(
@@ -116,7 +178,9 @@ const modifyRecipe = () => {};
 const removeRecipe = () => {};
 
 export {
-  getRecipeById,
+  getRecipes,
+  getRandomRecipes,
+  getRecipe,
   searchRecipe,
   addRecipe,
   uploadVote,

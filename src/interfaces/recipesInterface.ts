@@ -1,5 +1,7 @@
 export interface RecipesPaths {
-  getRecipeById: string;
+  getRecipes: string;
+  getRandomRecipes: string;
+  getRecipe: string;
   getRecipeByWord: string;
   addRecipe: string;
   uploadVote: string;
@@ -11,7 +13,7 @@ export interface RecipeSchema {
   id?: string;
   title: string;
   description: string;
-  category: number;
+  category: string;
   ingredients: Array<string>;
   tools?: Array<string>;
   steps: Array<string>;

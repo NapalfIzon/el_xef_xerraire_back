@@ -9,11 +9,11 @@ import {
   recipeTest,
   searchTestWord,
 } from "../../mocks/mockedVariables";
-import { getRecipeById, searchRecipe } from "./recipesController";
+import { getRecipe, searchRecipe } from "./recipesController";
 
 jest.mock("../../database/models/recipe");
 
-describe("Given a getRecipeById controller,", () => {
+describe("Given a getRecipe controller,", () => {
   describe("When it receives a non registered recipe id,", () => {
     test("Then it should invoke next funtion with an error message.", async () => {
       const req = mockedRequest();
@@ -23,7 +23,7 @@ describe("Given a getRecipeById controller,", () => {
       const errorMessage = `No se ha encontrado la receta id: ${req.body.id}`;
       Recipe.findById = jest.fn().mockRejectedValue("random error");
 
-      await getRecipeById(req, null, next);
+      await getRecipe(req, null, next);
 
       expect(next).toHaveBeenCalled();
       expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
@@ -38,7 +38,7 @@ describe("Given a getRecipeById controller,", () => {
       Recipe.findById = jest.fn().mockReturnValue(recipeTest);
       const res = mockedResponse();
 
-      await getRecipeById(req, res, null);
+      await getRecipe(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(recipeTest);
     });
