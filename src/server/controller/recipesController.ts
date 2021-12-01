@@ -63,7 +63,7 @@ const searchRecipe = async (
     }
   } catch {
     const error: any = new Error(
-      `No se ha encontrado la receta con el término '${searchValue}'`
+      "El formato de la petición no es el correcto."
     );
     error.code = 404;
     error.status = 404;
