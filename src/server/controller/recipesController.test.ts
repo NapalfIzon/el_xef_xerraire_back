@@ -4,8 +4,12 @@ import {
   mockedNext,
 } from "../../mocks/mockedFunctions";
 import Recipe from "../../database/models/recipe";
-import { testRecipeId, recipeTest } from "../../mocks/mockedVariables";
-import { getRecipeById } from "./recipesController";
+import {
+  testRecipeId,
+  recipeTest,
+  searchTestWord,
+} from "../../mocks/mockedVariables";
+import { getRecipeById, searchRecipe } from "./recipesController";
 
 jest.mock("../../database/models/recipe");
 
@@ -14,10 +18,10 @@ describe("Given a getRecipeById controller,", () => {
     test("Then it should invoke next funtion with an error message.", async () => {
       const req = mockedRequest();
       req.body = { ...testRecipeId };
-      Recipe.findById = jest.fn().mockReturnValue("random error");
-      const next = mockedNext;
+      const next = mockedNext();
       const errorProperty = "message";
       const errorMessage = `No se ha encontrado la receta id: ${req.body.id}`;
+      Recipe.findById = jest.fn().mockRejectedValue("random error");
 
       await getRecipeById(req, null, next);
 
@@ -35,6 +39,55 @@ describe("Given a getRecipeById controller,", () => {
       const res = mockedResponse();
 
       await getRecipeById(req, res, null);
+
+      expect(res.json).toHaveBeenCalledWith(recipeTest);
+    });
+  });
+});
+
+describe("Given a searchRecipe controller,", () => {
+  describe("When it receives a incorrect search parameter,", () => {
+    test("Then it should invoke next funtion with an error message.", async () => {
+      const req = mockedRequest();
+      req.body = { searchValue: "random" };
+      const next = mockedNext();
+      const errorProperty = "message";
+      const errorMessage = "El formato de la petición no es el correcto.";
+      Recipe.find = jest.fn().mockRejectedValue("random error");
+
+      await searchRecipe(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives an empty search parameter,", () => {
+    test("Then it should invoke next funtion with an error message.", async () => {
+      const req = mockedRequest();
+      req.body = { searchValue: "" };
+      const next = mockedNext();
+      const errorProperty = "message";
+      const errorMessage =
+        "El formato de la palabra a buscar no es el correcto.";
+
+      await searchRecipe(req, null, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(next.mock.calls[0][0]).toHaveProperty(errorProperty);
+      expect(next.mock.calls[0][0].message).toBe(errorMessage);
+    });
+  });
+
+  describe("When it receives a word in a correct format,", () => {
+    test("Then it should invoke res.json with an array of searched recipes.", async () => {
+      const req = mockedRequest();
+      req.body = { searchValue: searchTestWord };
+      const res = mockedResponse();
+      Recipe.find = jest.fn().mockResolvedValue(recipeTest);
+
+      await searchRecipe(req, res, null);
 
       expect(res.json).toHaveBeenCalledWith(recipeTest);
     });
