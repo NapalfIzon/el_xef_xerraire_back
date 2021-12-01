@@ -86,6 +86,8 @@ const recipeTest: RecipeSchema = {
   imageBackup: "/Images/rutaLocal",
 };
 
+const searchTestWord: string = "huevo";
+
 export {
   userTest,
   newUserTest,
@@ -96,4 +98,5 @@ export {
   authorizationHeaderRequestOk,
   testRecipeId,
   recipeTest,
+  searchTestWord,
 };
