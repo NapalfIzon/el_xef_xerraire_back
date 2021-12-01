@@ -2,7 +2,9 @@ import express from "express";
 import auth from "../middlewares/auth";
 import recipesPath from "../paths/recipesPath";
 import {
-  getRecipeById,
+  getRecipes,
+  getRandomRecipes,
+  getRecipe,
   searchRecipe,
   addRecipe,
   uploadVote,
@@ -12,7 +14,11 @@ import {
 
 const router = express.Router();
 
-router.post(recipesPath.getRecipeById, getRecipeById);
+router.get(recipesPath.getRecipes, getRecipes);
+
+router.get(recipesPath.getRandomRecipes, getRandomRecipes);
+
+router.post(recipesPath.getRecipe, getRecipe);
 
 router.post(recipesPath.getRecipeByWord, auth, searchRecipe);
 

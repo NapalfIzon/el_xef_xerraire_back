@@ -1,7 +1,9 @@
 import { RecipesPaths } from "../../interfaces/recipesInterface";
 
 const recipesPath: RecipesPaths = {
-  getRecipeById: "/getrecipe",
+  getRecipes: "/",
+  getRandomRecipes: "/random",
+  getRecipe: "/getrecipe",
   getRecipeByWord: "/searchrecipe",
   addRecipe: "/addrecipe",
   uploadVote: "/uploadvote",
