@@ -151,6 +151,8 @@ const addRecipe = async (
       steps,
       image,
       imageBackup: image,
+      valoration: 3,
+      quantityValorations: 3,
     };
 
     await Recipe.create(newRecipe);

@@ -84,6 +84,7 @@ const recipeTest: RecipeSchema = {
   ],
   image: "https://firebase",
   imageBackup: "/Images/rutaLocal",
+  valoration: 5,
 };
 
 const searchTestWord: string = "huevo";

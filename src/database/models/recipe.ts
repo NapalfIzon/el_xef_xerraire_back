@@ -38,6 +38,16 @@ const recipeSchema = new Schema({
     type: String,
     required: false,
   },
+  valoration: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: true,
+  },
+  quantityValorations: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Recipe = model<RecipeSchema>("Recipe", recipeSchema, "recipes");
