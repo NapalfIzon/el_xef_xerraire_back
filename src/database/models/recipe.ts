@@ -48,6 +48,10 @@ const recipeSchema = new Schema({
     type: Number,
     required: true,
   },
+  owner: {
+    type: String,
+    required: true,
+  },
 });
 
 const Recipe = model<RecipeSchema>("Recipe", recipeSchema, "recipes");

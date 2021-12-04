@@ -138,8 +138,16 @@ const addRecipe = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const { title, description, category, ingredients, tools, steps, image } =
-    req.body;
+  const {
+    title,
+    description,
+    category,
+    ingredients,
+    tools,
+    steps,
+    image,
+    owner,
+  }: RecipeSchema = req.body;
 
   try {
     const newRecipe: RecipeSchema = {
@@ -153,6 +161,7 @@ const addRecipe = async (
       imageBackup: image,
       valoration: 3,
       quantityValorations: 3,
+      owner,
     };
 
     await Recipe.create(newRecipe);

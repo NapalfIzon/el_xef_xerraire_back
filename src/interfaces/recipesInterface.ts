@@ -21,4 +21,5 @@ export interface RecipeSchema {
   imageBackup?: string;
   valoration: number;
   quantityValorations: number;
+  owner: string;
 }
