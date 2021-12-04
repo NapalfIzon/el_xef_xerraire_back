@@ -86,6 +86,7 @@ const recipeTest: RecipeSchema = {
   imageBackup: "/Images/rutaLocal",
   valoration: 5,
   quantityValorations: 3,
+  owner: "67890",
 };
 
 const searchTestWord: string = "huevo";
