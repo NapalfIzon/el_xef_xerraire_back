@@ -26,7 +26,7 @@ router.post(recipesPath.addRecipe, auth, addRecipe);
 
 router.patch(recipesPath.uploadVote, auth, uploadVote);
 
-router.patch(recipesPath.modifyRecipe, auth, modifyRecipe);
+router.put(recipesPath.modifyRecipe, auth, modifyRecipe);
 
 router.delete(recipesPath.removeRecipe, auth, removeRecipe);
 
