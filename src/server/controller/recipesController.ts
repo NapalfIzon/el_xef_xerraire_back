@@ -2,10 +2,14 @@ import express from "express";
 import chalk from "chalk";
 import Debug from "debug";
 import Recipe from "../../database/models/recipe";
+import User from "../../database/models/user";
 import { RecipeSchema } from "../../interfaces/recipesInterface";
 import categories from "../../utils/categories";
 
 const debug = Debug("xerrAPI:recipesController");
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const populateRandom = User;
 
 const getRecipes = async (
   req: express.Request,
@@ -13,7 +17,10 @@ const getRecipes = async (
   next: express.NextFunction
 ) => {
   try {
-    const recipesData: Array<object> = await Recipe.find().limit(8);
+    const recipesData: Array<object> = await Recipe.find().limit(8).populate({
+      path: "owner",
+      select: "id avatar",
+    });
     debug(
       chalk.bgGray.black(
         `Se ha generado una lista de recetas correctamente ${"(´ ▽ `)b"}`

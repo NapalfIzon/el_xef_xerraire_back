@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
 import { RecipeSchema } from "../../interfaces/recipesInterface";
 
 const recipeSchema = new Schema({
@@ -49,7 +49,8 @@ const recipeSchema = new Schema({
     required: true,
   },
   owner: {
-    type: String,
+    type: Types.ObjectId,
+    ref: "User",
     required: true,
   },
 });
