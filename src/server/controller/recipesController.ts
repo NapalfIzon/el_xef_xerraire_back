@@ -191,7 +191,42 @@ const addRecipe = async (
 
 const uploadVote = () => {};
 
-const modifyRecipe = () => {};
+const modifyRecipe = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const { recipe } = req.body;
+  const { id } = recipe;
+  const isIdStored: RecipeSchema = await Recipe.findById(id);
+
+  if (isIdStored) {
+    try {
+      await Recipe.findByIdAndUpdate(id, recipe);
+      debug(
+        chalk.bgGray.black(
+          `Se ha modificado correctamente la receta ${id} ${"(´ ▽ `)b"}`
+        )
+      );
+
+      res.status(202).json({
+        resultado: `Se ha modificado correctamente la receta ${id}`,
+      });
+    } catch {
+      const error: any = new Error(
+        `No se ha podido modificar la receta id: ${id}`
+      );
+      error.code = 500;
+      error.status = 500;
+      next(error);
+    }
+  } else {
+    const error: any = new Error(`No se ha encontrado la receta id: ${id}`);
+    error.code = 404;
+    error.status = 404;
+    next(error);
+  }
+};
 
 const removeRecipe = async (
   req: express.Request,
