@@ -186,7 +186,42 @@ const uploadVote = () => {};
 
 const modifyRecipe = () => {};
 
-const removeRecipe = () => {};
+const removeRecipe = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const { recipeId } = req.body;
+  const id = recipeId;
+  const isIdStored: RecipeSchema = await Recipe.findById(id);
+
+  if (isIdStored) {
+    try {
+      await Recipe.findByIdAndDelete(id);
+      debug(
+        chalk.bgGray.black(
+          `Se ha eliminado correctamente la receta ${id} ${"(´ ▽ `)b"}`
+        )
+      );
+
+      res.json({
+        resultado: `Se ha eliminado correctamente la receta ${id}`,
+      });
+    } catch {
+      const error: any = new Error(
+        `No se ha podido eliminar la receta id: ${id}`
+      );
+      error.code = 500;
+      error.status = 500;
+      next(error);
+    }
+  } else {
+    const error: any = new Error(`No se ha encontrado la receta id: ${id}`);
+    error.code = 404;
+    error.status = 404;
+    next(error);
+  }
+};
 
 export {
   getRecipes,
