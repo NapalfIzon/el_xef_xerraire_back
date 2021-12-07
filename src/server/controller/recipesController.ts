@@ -194,7 +194,6 @@ const removeRecipe = async (
   const { recipeId } = req.body;
   const id = recipeId;
   const isIdStored: RecipeSchema = await Recipe.findById(id);
-  console.log(id);
 
   if (isIdStored) {
     try {
